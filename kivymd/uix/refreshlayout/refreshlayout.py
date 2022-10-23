@@ -36,7 +36,7 @@ Example
                 title: app.title
                 md_bg_color: app.theme_cls.primary_color
                 background_palette: 'Primary'
-                elevation: 10
+                elevation: 4
                 left_action_items: [['menu', lambda x: x]]
 
             MDScrollViewRefreshLayout:
@@ -197,7 +197,7 @@ class MDScrollViewRefreshLayout(MDScrollView):
 class RefreshSpinner(ThemableBehavior, FloatLayout):
     spinner_color = ColorProperty([1, 1, 1, 1])
     """
-    Color of spinner.
+    Color of spinner in (r, g, b, a) or string format.
 
     :attr:`spinner_color` is a :class:`~kivy.properties.ColorProperty`
     and defaults to `[1, 1, 1, 1]`.

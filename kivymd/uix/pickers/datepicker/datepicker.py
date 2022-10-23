@@ -11,65 +11,110 @@ Components/DatePicker
 .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/picker-previous.png
     :align: center
 
-.. warning:: The widget is under testing. Therefore, we would be grateful if
-    you would let us know about the bugs found.
-
 .. rubric:: Usage
 
-.. code-block:: python
+.. tabs::
 
-    from kivy.lang import Builder
+    .. tab:: Declarative KV style
 
-    from kivymd.app import MDApp
-    from kivymd.uix.pickers import MDDatePicker
+        .. code-block:: python
 
-    KV = '''
-    MDFloatLayout:
+            from kivy.lang import Builder
 
-        MDTopAppBar:
-            title: "MDDatePicker"
-            pos_hint: {"top": 1}
-            elevation: 10
+            from kivymd.app import MDApp
+            from kivymd.uix.pickers import MDDatePicker
 
-        MDRaisedButton:
-            text: "Open date picker"
-            pos_hint: {'center_x': .5, 'center_y': .5}
-            on_release: app.show_date_picker()
-    '''
+            KV = '''
+            MDFloatLayout:
 
-
-    class Test(MDApp):
-        def build(self):
-            return Builder.load_string(KV)
-
-        def on_save(self, instance, value, date_range):
-            '''
-            Events called when the "OK" dialog box button is clicked.
-
-            :type instance: <kivymd.uix.picker.MDDatePicker object>;
-
-            :param value: selected date;
-            :type value: <class 'datetime.date'>;
-
-            :param date_range: list of 'datetime.date' objects in the selected range;
-            :type date_range: <class 'list'>;
+                MDRaisedButton:
+                    text: "Open date picker"
+                    pos_hint: {'center_x': .5, 'center_y': .5}
+                    on_release: app.show_date_picker()
             '''
 
-            print(instance, value, date_range)
 
-        def on_cancel(self, instance, value):
-            '''Events called when the "CANCEL" dialog box button is clicked.'''
+            class Test(MDApp):
+                def build(self):
+                    self.theme_cls.theme_style = "Dark"
+                    self.theme_cls.primary_palette = "Orange"
+                    return Builder.load_string(KV)
 
-        def show_date_picker(self):
-            date_dialog = MDDatePicker()
-            date_dialog.bind(on_save=self.on_save, on_cancel=self.on_cancel)
-            date_dialog.open()
+                def on_save(self, instance, value, date_range):
+                    '''
+                    Events called when the "OK" dialog box button is clicked.
+
+                    :type instance: <kivymd.uix.picker.MDDatePicker object>;
+                    :param value: selected date;
+                    :type value: <class 'datetime.date'>;
+                    :param date_range: list of 'datetime.date' objects in the selected range;
+                    :type date_range: <class 'list'>;
+                    '''
+
+                    print(instance, value, date_range)
+
+                def on_cancel(self, instance, value):
+                    '''Events called when the "CANCEL" dialog box button is clicked.'''
+
+                def show_date_picker(self):
+                    date_dialog = MDDatePicker()
+                    date_dialog.bind(on_save=self.on_save, on_cancel=self.on_cancel)
+                    date_dialog.open()
 
 
-    Test().run()
+            Test().run()
+
+    .. tab:: Declarative python style
+
+        .. code-block:: python
+
+            from kivymd.app import MDApp
+            from kivymd.uix.button import MDRaisedButton
+            from kivymd.uix.pickers import MDDatePicker
+            from kivymd.uix.screen import MDScreen
 
 
-.. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/MDDatePicker.gif
+            class Test(MDApp):
+                def build(self):
+                    self.theme_cls.theme_style = "Dark"
+                    self.theme_cls.primary_palette = "Orange"
+                    return (
+                        MDScreen(
+                            MDRaisedButton(
+                                text="Open data picker",
+                                pos_hint={'center_x': .5, 'center_y': .5},
+                                on_release=self.show_date_picker,
+                            )
+                        )
+                    )
+
+                def on_save(self, instance, value, date_range):
+                    '''
+                    Events called when the "OK" dialog box button is clicked.
+
+                    :type instance: <kivymd.uix.picker.MDDatePicker object>;
+
+                    :param value: selected date;
+                    :type value: <class 'datetime.date'>;
+
+                    :param date_range: list of 'datetime.date' objects in the selected range;
+                    :type date_range: <class 'list'>;
+                    '''
+
+                    print(instance, value, date_range)
+
+                def on_cancel(self, instance, value):
+                    '''Events called when the "CANCEL" dialog box button is clicked.'''
+
+                def show_date_picker(self, *args):
+                    date_dialog = MDDatePicker()
+                    date_dialog.bind(on_save=self.on_save, on_cancel=self.on_cancel)
+                    date_dialog.open()
+
+
+            Test().run()
+
+.. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/MDDatePicker.png
     :align: center
 
 Open date dialog with the specified date
@@ -81,7 +126,7 @@ Open date dialog with the specified date
         date_dialog = MDDatePicker(year=1983, month=4, day=12)
         date_dialog.open()
 
-.. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/previous-date.png
+.. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/specified-date.png
     :align: center
 
 Interval date
@@ -94,12 +139,16 @@ that are not included in this range will have the status `disabled`.
 
     def show_date_picker(self):
         date_dialog = MDDatePicker(
-            min_date=datetime.date(2021, 2, 15),
-            max_date=datetime.date(2021, 3, 27),
+            min_date=datetime.date.today(),
+            max_date=datetime.date(
+                datetime.date.today().year,
+                datetime.date.today().month,
+                datetime.date.today().day + 2,
+            ),
         )
         date_dialog.open()
 
-.. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/range-date.gif
+.. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/range-date.png
     :align: center
 
 The range of available dates can be changed in the picker dialog:
@@ -122,7 +171,7 @@ You can set the range of years using the :attr:`~kivymd.uix.picker.MDDatePicker.
 .. code-block:: python
 
     def show_date_picker(self):
-        date_dialog = MDDatePicker(min_year=2021, max_year=2030)
+        date_dialog = MDDatePicker(min_year=2022, max_year=2030)
         date_dialog.open()
 
 .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/min-max-year-date.png
@@ -141,18 +190,20 @@ Set and select a date range
     :align: center
 """
 
+from __future__ import annotations
+
 __all__ = ("MDDatePicker", "BaseDialogPicker", "DatePickerInputField")
 
 import calendar
 import datetime
+import math
 import os
 import time
 from datetime import date
+from itertools import zip_longest
 from typing import Union
 
-from kivy import Logger
 from kivy.animation import Animation
-from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.properties import (
@@ -175,7 +226,7 @@ from kivymd.theming import ThemableBehavior, ThemeManager
 from kivymd.toast import toast
 from kivymd.uix.behaviors import (
     CircularRippleBehavior,
-    FakeRectangularElevationBehavior,
+    CommonElevationBehavior,
     SpecificBackgroundColorBehavior,
 )
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -194,7 +245,7 @@ with open(
 
 class BaseDialogPicker(
     BaseDialog,
-    FakeRectangularElevationBehavior,
+    CommonElevationBehavior,
     SpecificBackgroundColorBehavior,
 ):
     """
@@ -255,11 +306,11 @@ class BaseDialogPicker(
 
     primary_color = ColorProperty(None)
     """
-    Background color of toolbar in (r, g, b, a) format.
+    Background color of toolbar in (r, g, b, a) or string format.
 
     .. code-block:: python
 
-        MDDatePicker(primary_color=get_color_from_hex("#72225b"))
+        MDDatePicker(primary_color="brown")
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/primary-color-date.png
         :align: center
@@ -270,13 +321,13 @@ class BaseDialogPicker(
 
     accent_color = ColorProperty(None)
     """
-    Background color of calendar/clock face in (r, g, b, a) format.
+    Background color of calendar/clock face in (r, g, b, a) or string format.
 
     .. code-block:: python
 
         MDDatePicker(
-            primary_color=get_color_from_hex("#72225b"),
-            accent_color=get_color_from_hex("#5d1a4a"),
+            primary_color="brown",
+            accent_color="darkred",
         )
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/accent-color-date.png
@@ -288,14 +339,15 @@ class BaseDialogPicker(
 
     selector_color = ColorProperty(None)
     """
-    Background color of the selected day of the month or hour in (r, g, b, a) format.
+    Background color of the selected day of the month or hour in (r, g, b, a)
+    or string format.
 
     .. code-block:: python
 
         MDDatePicker(
-            primary_color=get_color_from_hex("#72225b"),
-            accent_color=get_color_from_hex("#5d1a4a"),
-            selector_color=get_color_from_hex("#e93f39"),
+            primary_color="brown",
+            accent_color="darkred",
+            selector_color="red",
         )
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/selector-color-date.png
@@ -307,15 +359,15 @@ class BaseDialogPicker(
 
     text_toolbar_color = ColorProperty(None)
     """
-    Color of labels for text on a toolbar in (r, g, b, a) format.
+    Color of labels for text on a toolbar in (r, g, b, a) or string format.
 
     .. code-block:: python
 
         MDDatePicker(
-            primary_color=get_color_from_hex("#72225b"),
-            accent_color=get_color_from_hex("#5d1a4a"),
-            selector_color=get_color_from_hex("#e93f39"),
-            text_toolbar_color=get_color_from_hex("#cccccc"),
+            primary_color="brown",
+            accent_color="darkred",
+            selector_color="red",
+            text_toolbar_color="lightgrey",
         )
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/text-toolbar-color-date.png
@@ -327,16 +379,16 @@ class BaseDialogPicker(
 
     text_color = ColorProperty(None)
     """
-    Color of text labels in calendar/clock face in (r, g, b, a) format.
+    Color of text labels in calendar/clock face in (r, g, b, a) or string format.
 
     .. code-block:: python
 
         MDDatePicker(
-            primary_color=get_color_from_hex("#72225b"),
-            accent_color=get_color_from_hex("#5d1a4a"),
-            selector_color=get_color_from_hex("#e93f39"),
-            text_toolbar_color=get_color_from_hex("#cccccc"),
-            text_color=("#ffffff"),
+            primary_color="brown",
+            accent_color="darkred",
+            selector_color="red",
+            text_toolbar_color="lightgrey",
+            text_color="orange",
         )
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/text-color-date.png
@@ -348,17 +400,18 @@ class BaseDialogPicker(
 
     text_current_color = ColorProperty(None)
     """
-    Color of the text of the current day of the month/hour in (r, g, b, a) format.
+    Color of the text of the current day of the month/hour in (r, g, b, a)
+    or string format.
 
     .. code-block:: python
 
         MDDatePicker(
-            primary_color=get_color_from_hex("#72225b"),
-            accent_color=get_color_from_hex("#5d1a4a"),
-            selector_color=get_color_from_hex("#e93f39"),
-            text_toolbar_color=get_color_from_hex("#cccccc"),
-            text_color=("#ffffff"),
-            text_current_color=get_color_from_hex("#e93f39"),
+            primary_color="brown",
+            accent_color="darkred",
+            selector_color="red",
+            text_toolbar_color="lightgrey",
+            text_color="orange",
+            text_current_color="white",
         )
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/text-current-color-date.png
@@ -375,13 +428,13 @@ class BaseDialogPicker(
     .. code-block:: python
 
         MDDatePicker(
-            primary_color=get_color_from_hex("#72225b"),
-            accent_color=get_color_from_hex("#5d1a4a"),
-            selector_color=get_color_from_hex("#e93f39"),
-            text_toolbar_color=get_color_from_hex("#cccccc"),
-            text_color=("#ffffff"),
-            text_current_color=get_color_from_hex("#e93f39"),
-            text_button_color=(1, 1, 1, .5),
+            primary_color="brown",
+            accent_color="darkred",
+            selector_color="red",
+            text_toolbar_color="lightgrey",
+            text_color="orange",
+            text_current_color="white",
+            text_button_color="lightgrey",
         )
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/text-button-color-date.png
@@ -391,52 +444,124 @@ class BaseDialogPicker(
     and defaults to `None`.
     """
 
-    input_field_background_color = ColorProperty(None)
+    input_field_background_color_normal = ColorProperty(None)
     """
-    Background color of input fields in (r, g, b, a) format.
+    Background color normal of input fields in (r, g, b, a) or string format.
+
+    .. versionadded:: 1.1.0
 
     .. code-block:: python
 
         MDDatePicker(
-            primary_color=get_color_from_hex("#72225b"),
-            accent_color=get_color_from_hex("#5d1a4a"),
-            selector_color=get_color_from_hex("#e93f39"),
-            text_toolbar_color=get_color_from_hex("#cccccc"),
-            text_color=("#ffffff"),
-            text_current_color=get_color_from_hex("#e93f39"),
-            input_field_background_color=(1, 1, 1, 0.2),
+            primary_color="brown",
+            accent_color="darkred",
+            selector_color="red",
+            text_toolbar_color="lightgrey",
+            text_color="orange",
+            text_current_color="white",
+            text_button_color="lightgrey",
+            input_field_background_color_normal="coral",
         )
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/input-field-background-color-date.png
         :align: center
 
-    :attr:`input_field_background_color` is an :class:`~kivy.properties.ColorProperty`
+    :attr:`input_field_background_color_normal` is an :class:`~kivy.properties.ColorProperty`
     and defaults to `None`.
+    """
+
+    input_field_background_color_focus = ColorProperty(None)
+    """
+    Background color normal of input fields in (r, g, b, a) or string format.
+
+    .. versionadded:: 1.1.0
+
+    .. code-block:: python
+
+        MDDatePicker(
+            primary_color="brown",
+            accent_color="darkred",
+            selector_color="red",
+            text_toolbar_color="lightgrey",
+            text_color="orange",
+            text_current_color="white",
+            text_button_color="lightgrey",
+            input_field_background_color_normal="coral",
+            input_field_background_color_focus="red",
+        )
+
+    .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/input-field-background-color-focus-date.png
+        :align: center
+
+    :attr:`input_field_background_color_focus` is an :class:`~kivy.properties.ColorProperty`
+    and defaults to `None`.
+    """
+
+    input_field_background_color = ColorProperty(None)
+    """
+    .. deprecated:: 1.1.0
+        Use :attr:`input_field_background_color_normal` instead.
     """
 
     input_field_text_color = ColorProperty(None)
     """
-    Text color of input fields in (r, g, b, a) format.
+    .. deprecated:: 1.1.0
+        Use :attr:`input_field_text_color_normal` instead.
+    """
 
-    Background color of input fields.
+    input_field_text_color_normal = ColorProperty(None)
+    """
+    Text color normal of input fields in (r, g, b, a) or string format.
+
+    .. versionadded:: 1.1.0
 
     .. code-block:: python
 
         MDDatePicker(
-            primary_color=get_color_from_hex("#72225b"),
-            accent_color=get_color_from_hex("#5d1a4a"),
-            selector_color=get_color_from_hex("#e93f39"),
-            text_toolbar_color=get_color_from_hex("#cccccc"),
-            text_color=("#ffffff"),
-            text_current_color=get_color_from_hex("#e93f39"),
-            input_field_background_color=(1, 1, 1, 0.2),
-            input_field_text_color=(1, 1, 1, 1),
+            primary_color="brown",
+            accent_color="darkred",
+            selector_color="red",
+            text_toolbar_color="lightgrey",
+            text_color="orange",
+            text_current_color="white",
+            text_button_color="lightgrey",
+            input_field_background_color_normal="brown",
+            input_field_background_color_focus="red",
+            input_field_text_color_normal="white",
         )
 
-    .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/input-field-background-color-date.png
+    .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/input-field-text-color-normal-date.png
         :align: center
 
-    :attr:`input_field_text_color` is an :class:`~kivy.properties.ColorProperty`
+    :attr:`input_field_text_color_normal` is an :class:`~kivy.properties.ColorProperty`
+    and defaults to `None`.
+    """
+
+    input_field_text_color_focus = ColorProperty(None)
+    """
+    Text color focus of input fields in (r, g, b, a) or string format.
+
+    .. versionadded:: 1.1.0
+
+    .. code-block:: python
+
+        MDDatePicker(
+            primary_color="brown",
+            accent_color="darkred",
+            selector_color="red",
+            text_toolbar_color="lightgrey",
+            text_color="orange",
+            text_current_color="white",
+            text_button_color="lightgrey",
+            input_field_background_color_normal="brown",
+            input_field_background_color_focus="red",
+            input_field_text_color_normal="white",
+        )
+
+    .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/input-field-text-color-normal-date.png
+        :align: center
+
+    :attr:`input_field_text_color_focus` is an :class:`~kivy.properties.ColorProperty`
     and defaults to `None`.
     """
 
@@ -447,16 +572,18 @@ class BaseDialogPicker(
     .. code-block:: python
 
         MDDatePicker(
-            primary_color=get_color_from_hex("#72225b"),
-            accent_color=get_color_from_hex("#5d1a4a"),
-            selector_color=get_color_from_hex("#e93f39"),
-            text_toolbar_color=get_color_from_hex("#cccccc"),
-            text_color=("#ffffff"),
-            text_current_color=get_color_from_hex("#e93f39"),
-            input_field_background_color=(1, 1, 1, 0.2),
-            input_field_text_color=(1, 1, 1, 1),
-            font_name="Weather.ttf",
-
+            primary_color="brown",
+            accent_color="darkred",
+            selector_color="red",
+            text_toolbar_color="lightgrey",
+            text_color="orange",
+            text_current_color="white",
+            text_button_color="lightgrey",
+            input_field_background_color_normal="brown",
+            input_field_background_color_focus="red",
+            input_field_text_color_normal="white",
+            input_field_text_color_focus="lightgrey",
+            font_name="nasalization.ttf",
         )
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/font-name-date.png
@@ -470,6 +597,20 @@ class BaseDialogPicker(
         super().__init__(**kwargs)
         self.register_event_type("on_save")
         self.register_event_type("on_cancel")
+
+    def on_input_field_background_color(
+        self, instance, value: str | list | tuple
+    ) -> None:
+        """For supported of current API."""
+
+        self.input_field_background_color_normal = value
+
+    def on_input_field_text_color(
+        self, instance, value: str | list | tuple
+    ) -> None:
+        """For supported of current API."""
+
+        self.input_field_text_color_normal = value
 
     def on_save(self, *args) -> None:
         """Events called when the "OK" dialog box button is clicked."""
@@ -506,6 +647,20 @@ class DatePickerInputField(MDTextField):
 
     helper_text_mode = StringProperty("on_error")
     owner = ObjectProperty()  # MDDatePicker object
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.bind(text=self._on_text_check_errors)
+
+    def _on_text_check_errors(self, widget, text):
+        if text == "":
+            self.error = False
+            return
+        try:
+            datetime.datetime.strptime(text, "%d/%m/%Y")
+            self.error = False
+        except ValueError:
+            self.error = True
 
     def set_error(self):
         """Sets a text field to an error state."""
@@ -557,54 +712,21 @@ class DatePickerDaySelectableItem(
     owner = ObjectProperty()
     is_today = BooleanProperty(False)
     is_selected = BooleanProperty(False)
-    current_month = NumericProperty()
-    current_year = NumericProperty()
-    index = NumericProperty(0)
-
-    def check_date(self, year: int, month: int, day: int):
-        try:
-            return date(year, month, day) in self.owner._date_range
-        except ValueError as error:
-            if str(error) == "day is out of range for month":
-                return False
+    is_in_range = BooleanProperty(False)
+    is_range_start = BooleanProperty(False)
+    is_range_end = BooleanProperty(False)
+    is_month_end = BooleanProperty(False)
+    is_week_end = BooleanProperty(False)
 
     def on_release(self):
-        if (
-            self.owner.mode == "range"
-            and self.owner._end_range_date
-            and self.owner._start_range_date
-        ):
-            return
-        if (
-            not self.owner._input_date_dialog_open
-            and not self.owner._select_year_dialog_open
-        ):
-            if self.owner.mode == "range" and not self.owner._start_range_date:
-                self.owner._start_range_date = date(
-                    self.current_year, self.current_month, int(self.text)
-                )
-                self.owner.min_date = self.owner._start_range_date
-            elif (
-                self.owner.mode == "range"
-                and not self.owner._end_range_date
-                and self.owner._start_range_date
-            ):
-                self.owner._end_range_date = date(
-                    self.current_year, self.current_month, int(self.text)
-                )
-                if self.owner._end_range_date <= self.owner.min_date:
-                    toast(self.owner.date_range_text_error)
-                    Logger.error(
-                        "`Data Picker: max_date` value cannot be less than "
-                        "or equal to 'min_date' value."
-                    )
-                    self.owner._start_range_date = 0
-                    self.owner._end_range_date = 0
-                    return
-                self.owner.max_date = self.owner._end_range_date
-                self.owner.update_calendar_for_date_range()
+        self.owner.set_selected_widget(self)
 
-            self.owner.set_selected_widget(self)
+    def on_touch_down(self, touch):
+        # If year_layout is active don't dispatch on_touch_down events,
+        # so date items don't consume touch.
+        if not self.owner.ids._year_layout.disabled:
+            return
+        super().on_touch_down(touch)
 
 
 class DatePickerYearSelectableItem(RecycleDataViewBehavior, MDLabel):
@@ -612,8 +734,6 @@ class DatePickerYearSelectableItem(RecycleDataViewBehavior, MDLabel):
 
     index = None
     selected = BooleanProperty(False)
-    selectable = BooleanProperty(True)
-    selected_color = ColorProperty([0, 0, 0, 0])
     owner = ObjectProperty()
 
     def refresh_view_attrs(self, rv, index, data):
@@ -623,35 +743,12 @@ class DatePickerYearSelectableItem(RecycleDataViewBehavior, MDLabel):
     def on_touch_down(self, touch):
         if super().on_touch_down(touch):
             return True
-        if self.collide_point(*touch.pos) and self.selectable:
+        if self.collide_point(*touch.pos):
             self.owner.year = int(self.text)
-            # self.owner.sel_year = self.owner.year
-            self.owner.ids.label_full_date.text = self.owner.set_text_full_date(
-                self.owner.sel_year,
-                self.owner.sel_month,
-                self.owner.sel_day,
-                self.owner.theme_cls.device_orientation,
-            )
             return self.parent.select_with_touch(self.index, touch)
 
     def apply_selection(self, table_data, index, is_selected):
         self.selected = is_selected
-        if is_selected:
-            self.selected_color = (
-                self.owner.selector_color
-                if self.owner.selector_color
-                else self.theme_cls.primary_color
-            )
-            self.text_color = (1, 1, 1, 1)
-        else:
-            if int(self.text) == self.owner.sel_year:
-                self.text_color = (
-                    self.theme_cls.primary_color
-                    if not self.owner.text_current_color
-                    else self.owner.text_current_color
-                )
-            self.selected_color = [0, 0, 0, 0]
-            self.text_color = (0, 0, 0, 1)
 
 
 # TODO: Add the feature to embed the `MDDatePicker` class in other layouts
@@ -661,7 +758,7 @@ class DatePickerYearSelectableItem(RecycleDataViewBehavior, MDLabel):
 class MDDatePicker(BaseDialogPicker):
     text_weekday_color = ColorProperty(None)
     """
-    Text color of weekday names in (r, g, b, a) format.
+    Text color of weekday names in (r, g, b, a) or string format.
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/md-date-picker-text-weekday-color.png
         :align: center
@@ -743,7 +840,7 @@ class MDDatePicker(BaseDialogPicker):
     and defaults to `picker`.
     """
 
-    min_date = ObjectProperty()
+    min_date = ObjectProperty(allownone=True)
     """
     The minimum value of the date range for the `'mode`' parameter.
     Must be an object <class 'datetime.date'>.
@@ -754,7 +851,7 @@ class MDDatePicker(BaseDialogPicker):
     and defaults to `None`.
     """
 
-    max_date = ObjectProperty()
+    max_date = ObjectProperty(allownone=True)
     """
     The minimum value of the date range for the `'mode`' parameter.
     Must be an object <class 'datetime.date'>.
@@ -809,18 +906,13 @@ class MDDatePicker(BaseDialogPicker):
 
     _calendar_layout = ObjectProperty()
     _calendar_list = None
-    _enter_data_field = None
-    _enter_data_field_two = None
-    _enter_data_field_container = None
-    _date_range = []
-    _sel_day_widget = ObjectProperty()
+    _fields_container = None
     _scale_calendar_layout = NumericProperty(1)
     _scale_year_layout = NumericProperty(0)
     _shift_dialog_height = NumericProperty(0)
     _input_date_dialog_open = BooleanProperty(False)
     _select_year_dialog_open = False
-    _start_range_date = 0
-    _end_range_date = 0
+    _date_label_text = StringProperty()
 
     def __init__(
         self,
@@ -838,11 +930,6 @@ class MDDatePicker(BaseDialogPicker):
         self.month = self.sel_month
         self.year = self.sel_year
         self.day = self.sel_day
-        self._current_selected_date = (
-            self.sel_day,
-            self.sel_month,
-            self.sel_year,
-        )
         super().__init__(**kwargs)
         self.theme_cls.bind(device_orientation=self.on_device_orientation)
 
@@ -856,26 +943,17 @@ class MDDatePicker(BaseDialogPicker):
                     "'max_date' must be of class <class 'datetime.date'>"
                 )
             self.compare_date_range()
-            self._date_range = self.get_date_range()
 
         self.generate_list_widgets_days()
         self.update_calendar(self.sel_year, self.sel_month)
-
-        if (
-            not self.max_date
-            and not self.min_date
-            and not self._date_range
-            and self.mode != "range"
-        ):
-            # Mark the current day.
-            self.set_month_day(self.sel_day)
-            self._sel_day_widget.dispatch("on_release")
 
     def on_device_orientation(
         self, instance_theme_manager: ThemeManager, orientation_value: str
     ) -> None:
         """Called when the device's screen orientation changes."""
 
+        # Separators of the label text depend on the orientation.
+        self._update_date_label_text()
         if self._input_date_dialog_open:
             if orientation_value == "portrait":
                 self._shift_dialog_height = dp(250)
@@ -887,21 +965,12 @@ class MDDatePicker(BaseDialogPicker):
         Called when the 'OK' button is pressed to confirm the date entered.
         """
 
-        if self._enter_data_field and not self.is_date_valaid(
-            self._enter_data_field.text
-        ):
-            self._enter_data_field.set_error()
+        if self._input_date_dialog_open and not self._try_apply_input():
             return
-        if self._enter_data_field_two and not self.is_date_valaid(
-            self._enter_data_field_two.text
-        ):
-            self._enter_data_field_two.set_error()
-            return
-
         self.dispatch(
             "on_save",
             date(self.sel_year, self.sel_month, self.sel_day),
-            self._date_range,
+            self.get_date_range(),
         )
 
     def is_date_valaid(self, date: str) -> bool:
@@ -924,17 +993,13 @@ class MDDatePicker(BaseDialogPicker):
         Animation(opacity=1, d=0.15).start(self.ids.chevron_left)
         Animation(opacity=1, d=0.15).start(self.ids.chevron_right)
         Animation(_scale_year_layout=0, d=0.15).start(self)
-        Animation(
-            _shift_dialog_height=dp(0), _scale_calendar_layout=1, d=0.15
-        ).start(self)
+        Animation(_scale_calendar_layout=1, d=0.15).start(self)
 
-        self._calendar_layout.clear_widgets()
-        self.generate_list_widgets_days()
+        # Move selection to the same day and month of the selected year.
+        self.sel_year = self.year
+        last_day = calendar.monthrange(self.year, self.sel_month)[1]
+        self.sel_day = min(self.sel_day, last_day)
         self.update_calendar(self.year, self.month)
-
-        if self.mode != "range":
-            self.set_month_day(self.day)
-            self._sel_day_widget.dispatch("on_release")
 
     def transformation_to_dialog_select_year(self) -> None:
         def disabled_chevron_buttons(*args):
@@ -943,66 +1008,40 @@ class MDDatePicker(BaseDialogPicker):
 
         self._select_year_dialog_open = True
         self.ids._year_layout.disabled = False
-        self._scale_calendar_layout = 0
         Animation(opacity=0, d=0.15).start(self.ids.chevron_left)
         Animation(opacity=0, d=0.15).start(self.ids.chevron_right)
+        Animation(_scale_calendar_layout=0, d=0.15).start(self)
         anim = Animation(_scale_year_layout=1, d=0.15)
         anim.bind(on_complete=disabled_chevron_buttons)
         anim.start(self)
         self.ids.triangle.icon = "menu-up"
         self.generate_list_widgets_years()
         self.set_position_to_current_year()
+        if self.min_year <= self.year < self.max_year:
+            index = self.year - self.min_year
+            self.ids._year_layout.children[0].select_node(index)
+        else:
+            self.ids._year_layout.children[0].clear_selection()
 
     def transformation_to_dialog_input_date(self) -> None:
-        def set_date_to_input_field():
-            if not self._enter_data_field_two:
-                # Date of current day.
-                self._enter_data_field.text = (
-                    f"{'' if self.sel_day >= 10 else '0'}"
-                    f"{self.sel_day}/"
-                    f"{'' if self.sel_month >= 10 else '0'}"
-                    f"{self.sel_month}/{self.sel_year}"
-                )
-            else:
-                # Range start date.
-                self._enter_data_field.text = (
-                    f"{'' if self.min_date.day >= 10 else '0'}"
-                    f"{self.min_date.day}/"
-                    f"{'' if self.min_date.month >= 10 else '0'}"
-                    f"{self.min_date.month}/{self.min_date.year}"
-                )
-
-        def set_date_to_input_field_two() -> None:
-            # Range end date.
-            self._enter_data_field_two.text = (
-                f"{'' if self.max_date.day >= 10 else '0'}"
-                f"{self.max_date.day}/"
-                f"{'' if self.max_date.month >= 10 else '0'}"
-                f"{self.max_date.month}/{self.max_date.year}"
-            )
-
         self.ids.triangle.disabled = True
         if self._select_year_dialog_open:
             self.transformation_from_dialog_select_year()
         self._input_date_dialog_open = True
-
-        self._enter_data_field_container = DatePickerInputFieldContainer(
-            owner=self
-        )
-        self._enter_data_field = self.get_field()
-        if self.min_date and self.max_date:
-            self._enter_data_field_two = self.get_field()
-            set_date_to_input_field_two()
-        set_date_to_input_field()
-        self._enter_data_field_container.add_widget(self._enter_data_field)
-        if self._enter_data_field_two:
-            self._enter_data_field_container.add_widget(
-                self._enter_data_field_two
-            )
-
-        self.ids.container.add_widget(self._enter_data_field_container)
         self.ids.edit_icon.icon = "calendar"
         self.ids.label_title.text = self.title_input
+
+        self._fields_container = DatePickerInputFieldContainer(owner=self)
+        if self.mode == "picker":
+            selected_date = date(self.sel_year, self.sel_month, self.sel_day)
+            selected_dates = [selected_date]
+        else:
+            selected_dates = [self.min_date, self.max_date]
+        for selected_date in selected_dates:
+            field = self.get_field(selected_date)
+            field.bind(text=self._on_date_field_text_changes)
+            self._fields_container.add_widget(field)
+        self.ids.container.add_widget(self._fields_container)
 
         Animation(
             _shift_dialog_height=dp(250)
@@ -1021,28 +1060,22 @@ class MDDatePicker(BaseDialogPicker):
         ).start(self.ids.chevron_right)
         Animation(opacity=0, d=0.15).start(self.ids.label_month_selector)
         Animation(opacity=0, d=0.15).start(self.ids.triangle)
-        Animation(opacity=1, d=0.15).start(self._enter_data_field)
-        if self._enter_data_field_two:
-            Animation(opacity=1, d=0.15).start(self._enter_data_field_two)
-        self.ids.label_full_date.text = self.set_text_full_date(
-            self.sel_year,
-            self.sel_month,
-            self.sel_day,
-            self.theme_cls.device_orientation,
-        )
+        Animation(opacity=1, d=0.15).start(self._fields_container)
+        # The label text separator in landscape orientation depends on the
+        # open dialog.
+        self._update_date_label_text()
 
     def transformation_from_dialog_input_date(
         self, interval: Union[int, float]
     ) -> None:
+        if not self._try_apply_input():
+            return
         self._input_date_dialog_open = False
-        self.ids.label_full_date.text = self.set_text_full_date(
-            self.sel_year,
-            self.sel_month,
-            self.sel_day,
-            self.theme_cls.device_orientation,
-        )
         self.ids.triangle.disabled = False
-        self.ids.container.remove_widget(self._enter_data_field_container)
+        self.ids.edit_icon.icon = "pencil"
+        self.ids.label_title.text = self.title
+        self.ids.container.remove_widget(self._fields_container)
+        self._fields_container = None
         Animation(
             _shift_dialog_height=dp(0), _scale_calendar_layout=1, d=0.15
         ).start(self)
@@ -1056,44 +1089,67 @@ class MDDatePicker(BaseDialogPicker):
         ).start(self.ids.chevron_right)
         Animation(opacity=1, d=0.15).start(self.ids.label_month_selector)
         Animation(opacity=1, d=0.15).start(self.ids.triangle)
-        Animation(opacity=0, d=0.15).start(self._enter_data_field)
-        self.ids.edit_icon.icon = "pencil"
-        self.ids.label_title.text = self.title
+        # The label text separator in landscape orientation depends on the
+        # open dialog.
+        self._update_date_label_text()
 
-        if not self.min_date and not self.max_date:
-            list_date = self._enter_data_field.get_list_date()
-            if len(list_date) == 3 and len(list_date[2]) == 4:
-                # self._sel_day_widget.is_selected = False
-                self.update_calendar(int(list_date[2]), int(list_date[1]))
-                self.set_month_day(int(list_date[0]))
-                # self._sel_day_widget.dispatch("on_release")
-                if self.mode != "range":
-                    self._sel_day_widget.is_selected = False
-                    self._sel_day_widget.dispatch("on_release")
-        elif self.min_date and self.max_date:
-            list_min_date = self._enter_data_field.get_list_date()
-            list_max_date = self._enter_data_field_two.get_list_date()
+    def _get_dates_from_fields(self):
+        """
+        Return a list of dates entered by the user in the input fields.
 
-            if len(list_min_date) == 3 and len(list_min_date[2]) == 4:
-                self.min_date = date(
-                    int(list_min_date[2]),
-                    int(list_min_date[1]),
-                    int(list_min_date[0]),
-                )
-            if len(list_max_date) == 3 and len(list_max_date[2]) == 4:
-                self.max_date = date(
-                    int(list_max_date[2]),
-                    int(list_max_date[1]),
-                    int(list_max_date[0]),
-                )
+        If there is an error in the field or the field is empty, None will be
+        in its place in the list. The length of the list will be 0 if the input
+        dialog is closed, otherwise 1 in picker mode or 2 in range mode.
+        """
 
-            self.update_calendar_for_date_range()
-            self.ids.label_full_date.text = self.set_text_full_date(
-                int(list_max_date[2]),
-                int(list_max_date[1]),
-                int(list_max_date[0]),
-                self.theme_cls.device_orientation,
-            )
+        if not self._fields_container:
+            return []
+
+        dates = []
+        # Widgets are arranged in the reverse order of their addition.
+        for field in reversed(self._fields_container.children):
+            try:
+                date = datetime.datetime.strptime(field.text, "%d/%m/%Y").date()
+            except ValueError:
+                date = None
+            dates.append(date)
+
+        return dates
+
+    def _try_apply_input(self) -> bool:
+        """
+        Apply the dates entered by the user, update the calendar and return
+        True. If there are errors in the fields, do nothing and return False.
+        """
+
+        dates = self._get_dates_from_fields()
+        if not dates:
+            return True
+
+        # Widgets are arranged in the reverse order of their addition.
+        fields = reversed(self._fields_container.children)
+        if any(d is None and f.text for f, d in zip(fields, dates)):
+            return False
+
+        if self.mode == "picker":
+            selected_date = date(self.sel_year, self.sel_month, self.sel_day)
+            selected_date = dates[0] or selected_date
+            self.sel_year = selected_date.year
+            self.sel_month = selected_date.month
+            self.sel_day = selected_date.day
+            self.update_calendar(self.sel_year, self.sel_month)
+        elif self.mode == "range":
+            date1, date2 = dates[0] or self.min_date, dates[1] or self.max_date
+            ends = list(filter(bool, [date1, date2]))
+            if ends:
+                self.min_date = min(ends)
+                self.max_date = max(ends)
+                self.update_calendar(self.year, self.month)
+
+        return True
+
+    def _on_date_field_text_changes(self, *args):
+        self._update_date_label_text()
 
     def compare_date_range(self) -> None:
         # TODO: Add behavior if the minimum date range exceeds the maximum
@@ -1105,10 +1161,7 @@ class MDDatePicker(BaseDialogPicker):
             )
 
     def update_calendar_for_date_range(self) -> None:
-        # self.compare_date_range()
-        self._date_range = self.get_date_range()
-        self._calendar_layout.clear_widgets()
-        self.generate_list_widgets_days()
+        # This method is no longer used, use update_calendar instead.
         self.update_calendar(self.year, self.month)
 
     def update_text_full_date(self, list_date) -> None:
@@ -1117,102 +1170,95 @@ class MDDatePicker(BaseDialogPicker):
         in an open date input dialog.
         """
 
-        if len(list_date) == 1 and len(list_date[0]) == 2:
-            self.ids.label_full_date.text = self.set_text_full_date(
-                self.sel_year,
-                self.sel_month,
-                list_date[0],
-                self.theme_cls.device_orientation,
-            )
-        if len(list_date) == 2 and len(list_date[1]) == 2:
-            self.ids.label_full_date.text = self.set_text_full_date(
-                self.sel_year,
-                int(list_date[1]),
-                int(list_date[0]),
-                self.theme_cls.device_orientation,
-            )
-        if len(list_date) == 3 and len(list_date[2]) == 4:
-            self.ids.label_full_date.text = self.set_text_full_date(
-                int(list_date[2]),
-                int(list_date[1]),
-                int(list_date[0]),
-                self.theme_cls.device_orientation,
-            )
+        # This method no longer used, use update_calendar instead.
+        year = int(list_date[2]) if len(list_date) > 2 else self.sel_year
+        month = int(list_date[1]) if len(list_date) > 1 else self.sel_month
+        day = int(list_date[0]) if len(list_date) > 0 else self.sel_day
+        day = min(day, calendar.monthrange(year, month)[1])
+        self.sel_year, self.sel_month, self.sel_day = year, month, day
+        self.update_calendar(year, month)
 
     def update_calendar(self, year, month) -> None:
-        try:
-            dates = [x for x in self.calendar.itermonthdates(year, month)]
-        except ValueError as e:
-            if str(e) == "year is out of range":
-                pass
+        self.year, self.month = year, month
+        if self.mode == "picker":
+            selected_date = date(self.sel_year, self.sel_month, self.sel_day)
+            selected_dates = {selected_date}
         else:
-            self.year = year
-            self.month = month
-            for idx in range(len(self._calendar_list)):
-                self._calendar_list[idx].current_month = int(self.month)
-                self._calendar_list[idx].current_year = int(self.year)
+            selected_dates = {self.min_date, self.max_date}
+        # The label text depends on the selected date or date range.
+        self._update_date_label_text()
+        month_end = date(year, month, calendar.monthrange(year, month)[1])
+        dates = self.calendar.itermonthdates(year, month)
+        for widget, widget_date in zip_longest(self._calendar_list, dates):
+            # Only widgets whose dates are in the displayed month are visible.
+            visible = (
+                widget_date is not None
+                and widget_date.month == month
+                and widget_date.year == year
+            )
+            widget.text = str(widget_date.day) if visible else ""
+            widget.is_today = visible and widget_date == self.today
+            widget.is_selected = visible and widget_date in selected_dates
+            # I don't understand why, but this line is important. Without this
+            # line, some widgets that we are trying to disable remain enabled.
+            widget.disabled = False
+            widget.disabled = not visible
+            widget.is_in_range = (
+                visible
+                and self.min_date is not None
+                and self.max_date is not None
+                and self.min_date <= widget_date <= self.max_date
+            )
+            widget.is_range_start = (
+                visible
+                and self.min_date is not None
+                and widget_date == self.min_date
+            )
+            widget.is_range_end = (
+                visible
+                and self.max_date is not None
+                and widget_date == self.max_date
+            )
+            widget.is_month_end = widget_date == month_end
 
-                # Dates of the month not in the range 1-31.
-                if idx >= len(dates) or dates[idx].month != month:
-                    # self._calendar_list[idx].disabled = True
-                    self._calendar_list[idx].text = ""
-                # Dates of the month in the range 1-31.
-                else:
-                    self._calendar_list[idx].disabled = False
-                    self._calendar_list[idx].text = str(dates[idx].day)
-                    self._calendar_list[idx].is_today = dates[idx] == self.today
-                # The marked date widget has a True value in the `is_selected`
-                # attribute. In the KV file it is checked if the date widget
-                # (DatePickerDaySelectableItem) has the `is_selected = False`
-                # attribute value, then the date widget is not highlighted.
-                if (
-                    0
-                    if not self._calendar_list[idx].text
-                    else int(self._calendar_list[idx].text),
-                    self._calendar_list[idx].current_month,
-                    self._calendar_list[idx].current_year,
-                ) == self._current_selected_date:
-                    self._calendar_list[idx].is_selected = True
-                else:
-                    self._calendar_list[idx].is_selected = False
-                # Dates outside the set range - disabled.
-                if (
-                    self.mode == "picker"
-                    and self._date_range
-                    and self._calendar_list[idx].text
-                ) or (
-                    self.mode == "range"
-                    and self._start_range_date
-                    and self._end_range_date
-                    and self._calendar_list[idx].text
-                ):
-                    if (
-                        date(
-                            self._calendar_list[idx].current_year,
-                            self._calendar_list[idx].current_month,
-                            int(self._calendar_list[idx].text),
-                        )
-                        not in self._date_range
-                    ):
-                        self._calendar_list[idx].disabled = True
-
-    def get_field(self) -> MDTextField:
+    def get_field(self, date=None) -> MDTextField:
         """Creates and returns a text field object used to enter dates."""
 
         if issubclass(self.input_field_cls, MDTextField):
+            text_color_focus = (
+                self.input_field_text_color_focus
+                if self.input_field_text_color_focus
+                else self.theme_cls.primary_color
+            )
+            text_color_normal = (
+                self.input_field_text_color_normal
+                if self.input_field_text_color_normal
+                else self.theme_cls.disabled_hint_text_color
+            )
+            fill_color_focus = (
+                self.input_field_background_color_focus
+                if self.input_field_background_color_focus
+                else self.theme_cls.bg_dark
+            )
+            fill_color_normal = (
+                self.input_field_background_color_normal
+                if self.input_field_background_color_normal
+                else self.theme_cls.bg_darkest
+            )
+
             field = self.input_field_cls(
                 owner=self,
+                text=date.strftime("%d/%m/%Y") if date else "",
                 helper_text=self.helper_text,
-                line_color_normal=self.theme_cls.divider_color,
+                fill_color_normal=fill_color_normal,
+                fill_color_focus=fill_color_focus,
+                hint_text_color_normal=text_color_normal,
+                hint_text_color_focus=text_color_focus,
+                text_color_normal=text_color_normal,
+                text_color_focus=text_color_focus,
+                line_color_focus=text_color_focus,
+                line_color_normal=text_color_normal,
             )
-            field.color_mode = "custom"
-            field.line_color_focus = (
-                self.theme_cls.primary_color
-                if not self.input_field_text_color
-                else self.input_field_text_color
-            )
-            field.current_hint_text_color = field.line_color_focus
-            field._current_hint_text_color = field.line_color_focus
             return field
         else:
             raise TypeError(
@@ -1221,6 +1267,8 @@ class MDDatePicker(BaseDialogPicker):
             )
 
     def get_date_range(self) -> list:
+        if not self.min_date or not self.max_date:
+            return []
         date_range = [
             self.min_date + datetime.timedelta(days=x)
             for x in range((self.max_date - self.min_date).days + 1)
@@ -1234,157 +1282,118 @@ class MDDatePicker(BaseDialogPicker):
         a date range.
         """
 
-        if 12 < int(month) < 0:
-            raise ValueError(
-                "set_text_full_date:\n\t" f"Month [{month}] out of range."
-            )
-        if int(day) > calendar.monthrange(int(year), (month))[1]:
-            raise ValueError(
-                "set_text_full_date:\n\t"
-                f"Day [{day}] out of range for the month {month}"
-            )
-        date = datetime.date(int(year), int(month), int(day))
-        separator = (
-            "\n"
-            if (orientation == "landscape" and not self._input_date_dialog_open)
-            else " "
-        )
+        # In portrait orientation, the label is stretched in width, so we
+        # should not insert line breaks. When the input dialog is open, the
+        # label moves to the right and also stretches in width.
+        horizontal = orientation == "portrait" or self._input_date_dialog_open
 
+        def date_repr(date):
+            return date.strftime("%b").capitalize() + " " + str(date.day)
+
+        input_dates = self._get_dates_from_fields()
         if self.mode == "picker":
-            if not self.min_date and not self.max_date:
-                return (
-                    date.strftime("%a,").capitalize()
-                    + separator
-                    + date.strftime("%b ").capitalize()
-                    + str(day).lstrip("0")
-                )
-            else:
-                return (
-                    self.min_date.strftime("%b ").capitalize()
-                    + str(self.min_date.day).lstrip("0")
-                    + (
-                        " - "
-                        if orientation == "portrait"
-                        else (
-                            ",\n" if not self._input_date_dialog_open else ", "
-                        )
-                    )
-                    + self.max_date.strftime("%b ").capitalize()
-                    + str(self.max_date.day).lstrip("0")
-                )
+            selected_date = date(self.sel_year, self.sel_month, self.sel_day)
+            if input_dates:
+                selected_date = input_dates[0] or selected_date
+            weekday_repr = selected_date.strftime("%a").capitalize()
+            separator = ", " if horizontal else ",\n"
+            return weekday_repr + separator + date_repr(selected_date)
         elif self.mode == "range":
-            if self._start_range_date and self._end_range_date:
-                if (
-                    orientation == "landscape"
-                    and "-" in self.ids.label_full_date.text
-                ):
-                    return (
-                        self.ids.label_full_date.text.split("-")[0].strip()
-                        + (",\n" if not self._input_date_dialog_open else " - ")
-                        + date.strftime("%b ").capitalize()
-                        + str(day).lstrip("0")
-                    )
-                else:
-                    if (
-                        orientation == "landscape"
-                        and "," in self.ids.label_full_date.text
-                    ):
-                        return (
-                            self.ids.label_full_date.text.split(",")[0].strip()
-                            + (
-                                ",\n"
-                                if not self._input_date_dialog_open
-                                else "-"
-                            )
-                            + date.strftime("%b ").capitalize()
-                            + str(day).lstrip("0")
-                        )
-                    if (
-                        orientation == "portrait"
-                        and "," in self.ids.label_full_date.text
-                    ):
-                        return (
-                            self.ids.label_full_date.text.split(",")[0].strip()
-                            + "-"
-                            + date.strftime("%b ").capitalize()
-                            + str(day).lstrip("0")
-                        )
-                    if (
-                        orientation == "portrait"
-                        and "-" in self.ids.label_full_date.text
-                    ):
-                        return (
-                            self.ids.label_full_date.text.split("-")[0].strip()
-                            + " - "
-                            + date.strftime("%b ").capitalize()
-                            + str(day).lstrip("0")
-                        )
-            elif self._start_range_date and not self._end_range_date:
-                return (
-                    (
-                        date.strftime("%b ").capitalize()
-                        + str(day).lstrip("0")
-                        + " - End"
-                    )
-                    if orientation != "landscape"
-                    else (
-                        date.strftime("%b ").capitalize()
-                        + str(day).lstrip("0")
-                        + "{}End".format(
-                            ",\n" if not self._input_date_dialog_open else " - "
-                        )
-                    )
-                )
-            elif not self._start_range_date and not self._end_range_date:
-                return (
-                    "Start - End"
-                    if orientation != "landscape"
-                    else "Start{}End".format(
-                        ",\n" if not self._input_date_dialog_open else " - "
-                    )
-                )
+            start, end = self.min_date, self.max_date
+            if input_dates:
+                start, end = input_dates[0] or start, input_dates[1] or end
+            ends = [end for end in (start, end) if end]
+            if len(ends) == 0:
+                start_repr, end_repr = "Start", "End"
+            else:
+                start, end = min(ends), max(ends)
+                start_repr, end_repr = date_repr(start), date_repr(end)
+            separator = " — " if horizontal else ",\n"
+            return start_repr + separator + end_repr
+
+    def _update_date_label_text(self):
+        self._date_label_text = self.set_text_full_date(
+            self.sel_year,
+            self.sel_month,
+            self.sel_day,
+            self.theme_cls.device_orientation,
+        )
 
     def set_selected_widget(self, widget) -> None:
-        if self._sel_day_widget:
-            self._sel_day_widget.is_selected = False
-
-        widget.is_selected = True
-        self.sel_month = int(self.month)
-        self.sel_year = int(self.year)
-        self.sel_day = int(widget.text)
-        self._current_selected_date = (
-            self.sel_day,
-            self.sel_month,
-            self.sel_year,
-        )
-        self._sel_day_widget = widget
+        if self._select_year_dialog_open or self._input_date_dialog_open:
+            return
+        try:
+            widget_date = date(self.year, self.month, int(widget.text))
+        except ValueError:
+            return
+        if self.mode == "picker":
+            self.sel_year = widget_date.year
+            self.sel_month = widget_date.month
+            self.sel_day = widget_date.day
+            self.update_calendar(self.sel_year, self.sel_month)
+        elif self.mode == "range":
+            ends = [end for end in (self.min_date, self.max_date) if end]
+            if widget_date in ends:
+                ends = [end for end in ends if end != widget_date]
+            elif len(ends) < 2:
+                ends.append(widget_date)
+            else:
+                start, end = min(ends), max(ends)
+                if abs(widget_date - start).days < abs(widget_date - end).days:
+                    start = widget_date
+                else:
+                    end = widget_date
+                ends = [start, end]
+            if len(ends) == 0:
+                self.min_date, self.max_date = None, None
+            else:
+                self.min_date, self.max_date = min(ends), max(ends)
+            self.update_calendar(self.year, self.month)
 
     def set_month_day(self, day) -> None:
-        for idx in range(len(self._calendar_list)):
-            if str(day) == str(self._calendar_list[idx].text):
-                self._sel_day_widget = self._calendar_list[idx]
-                self.sel_day = int(self._calendar_list[idx].text)
-                if self._sel_day_widget:
-                    self._sel_day_widget.is_selected = False
-                self._sel_day_widget = self._calendar_list[idx]
+        # This method is no longer used. The code bellow repeats the behavior
+        # that was previously required of it for backward compatibility
+        # reasons.
+        self.sel_day = day
+        self.update_calendar(self.sel_year, self.sel_month)
 
     def set_position_to_current_year(self) -> None:
-        # TODO: Add the feature to set the position of the list of years
-        #  for the current year. This is not currently possible because the
-        #  ``RecycleView`` class does not support this functionality.
-        #  There is a solution to this problem
-        #  - https://github.com/Bakterija/log_fruit/blob/dev/src/app_modules/widgets/app_recycleview/recycleview.py.
-        #  But I have not been able to get it to work.
-        pass
+        year_layout = self.ids._year_layout
+        # When this method is called for the first time, RecycleView has not
+        # yet added widgets to the year list, so we use the default height.
+        widget_height = year_layout.children[0].default_size[1]
+        cols_amount = year_layout.children[0].cols
+        rows_amount = math.ceil((self.max_year - self.min_year) / cols_amount)
+        row_index = (self.year - self.min_year) // cols_amount
+        # To find the middle of the current year widget, we add the height of
+        # the rows under this widget with half the widget height.
+        widget_center_y = (rows_amount - row_index - 1 + 0.5) * widget_height
+        viewport_height = year_layout.height
+        year_list_height = rows_amount * widget_height
+        # If there are too few years in the list to fill the entire viewport,
+        # RecycleView displays additional empty space outside the list.
+        # We have to move the viewport up so that this space is displayed
+        # under the years list. Also, this guard condition protects against
+        # the division by zero error below.
+        if viewport_height >= year_list_height:
+            year_layout.scroll_y = 1
+            return
+        viewport_bottom = widget_center_y - 0.5 * viewport_height
+        # We set scroll_y property to the ratio of the actual lifting height
+        # of the viewport to the maximum possible, and clamp this ratio in the
+        # range from 0 to 1 so that the viewport still is in a valid position
+        # if it is impossible to show the widget in the middle.
+        scroll_y = viewport_bottom / (year_list_height - viewport_height)
+        year_layout.scroll_y = min(1, max(0, scroll_y))
 
     def generate_list_widgets_years(self) -> None:
+        self.ids._year_layout.data = []
         for i, number_year in enumerate(range(self.min_year, self.max_year)):
             self.ids._year_layout.data.append(
                 {
                     "owner": self,
                     "text": str(number_year),
                     "index": i,
-                    "selectable": True,
                     "viewclass": "DatePickerYearSelectableItem",
                 }
             )
@@ -1400,12 +1409,10 @@ class MDDatePicker(BaseDialogPicker):
             )
             weekday_label.font_name = self.font_name
             self._calendar_layout.add_widget(weekday_label)
-        for i, j in enumerate(range(6 * 7)):  # 6 weeks, 7 days a week
+        for i in range(6 * 7):  # 6 weeks, 7 days a week
             day_selectable_item = DatePickerDaySelectableItem(
-                index=i,
+                is_week_end=i % 7 == 6,
                 owner=self,
-                current_month=int(self.month),
-                current_year=int(self.year),
             )
             calendar_list.append(day_selectable_item)
             self._calendar_layout.add_widget(day_selectable_item)
@@ -1417,25 +1424,10 @@ class MDDatePicker(BaseDialogPicker):
         Switches the calendar to the previous/next month.
         """
 
-        operation = 1 if operation == "next" else -1
-        month = (
-            12
-            if self.month + operation == 0
-            else 1
-            if self.month + operation == 13
-            else self.month + operation
-        )
-        year = (
-            self.year - 1
-            if self.month + operation == 0
-            else self.year + 1
-            if self.month + operation == 13
-            else self.year
-        )
+        month_delta = 1 if operation == "next" else -1
+        year = self.year + (self.month - 1 + month_delta) // 12
+        month = (self.month - 1 + month_delta) % 12 + 1
+
+        if year <= 0:
+            year, month = 1, 1
         self.update_calendar(year, month)
-        if self.sel_day:
-            x = calendar.monthrange(year, month)[1]
-            if x < self.sel_day:
-                self.sel_day = (
-                    x if year <= self.sel_year and month <= self.sel_year else 1
-                )

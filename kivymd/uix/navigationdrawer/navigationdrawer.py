@@ -61,7 +61,7 @@ A simple example
 
                             MDTopAppBar:
                                 title: "Navigation Drawer"
-                                elevation: 10
+                                elevation: 4
                                 pos_hint: {"top": 1}
                                 md_bg_color: "#e7e4c0"
                                 specific_text_color: "#4a4939"
@@ -115,7 +115,7 @@ A simple example
                                     MDScreen(
                                         MDTopAppBar(
                                             title="Navigation Drawer",
-                                            elevation=10,
+                                            elevation=4,
                                             pos_hint={"top": 1},
                                             md_bg_color="#e7e4c0",
                                             specific_text_color="#4a4939",
@@ -188,7 +188,7 @@ Standard content for the navigation bar
 
                             MDTopAppBar:
                                 title: "Navigation Drawer"
-                                elevation: 10
+                                elevation: 4
                                 pos_hint: {"top": 1}
                                 md_bg_color: "#e7e4c0"
                                 specific_text_color: "#4a4939"
@@ -296,7 +296,7 @@ Standard content for the navigation bar
                                     MDScreen(
                                         MDTopAppBar(
                                             title="Navigation Drawer",
-                                            elevation=10,
+                                            elevation=4,
                                             pos_hint={"top": 1},
                                             md_bg_color="#e7e4c0",
                                             specific_text_color="#4a4939",
@@ -396,7 +396,7 @@ Switching screens in the ``ScreenManager`` and using the common ``MDTopAppBar``
 
                 MDTopAppBar:
                     pos_hint: {"top": 1}
-                    elevation: 10
+                    elevation: 4
                     title: "MDNavigationDrawer"
                     left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
 
@@ -465,7 +465,7 @@ Switching screens in the ``ScreenManager`` and using the common ``MDTopAppBar``
                         MDScreen(
                             MDTopAppBar(
                                 pos_hint={"top": 1},
-                                elevation=10,
+                                elevation=4,
                                 title="MDNavigationDrawer",
                                 left_action_items=[["menu", lambda x: self.nav_drawer_open()]],
                             ),
@@ -551,14 +551,9 @@ from kivy.properties import (
     StringProperty,
     VariableListProperty,
 )
-from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import ScreenManager
 
 from kivymd import uix_path
-from kivymd.uix.behaviors import (
-    DeclarativeBehavior,
-    FakeRectangularElevationBehavior,
-)
 from kivymd.uix.behaviors.focus_behavior import FocusBehavior
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.card import MDCard
@@ -742,7 +737,7 @@ class MDNavigationDrawerDivider(MDBoxLayout):
 
     color = ColorProperty(None)
     """
-    Divider color in ``rgba`` format.
+    Divider color in (r, g, b, a) or string format.
 
     :attr:`color` is a :class:`~kivy.properties.ColorProperty`
     and defaults to `None`.
@@ -816,7 +811,7 @@ class MDNavigationDrawerHeader(MDBoxLayout):
 
     title_color = ColorProperty(None)
     """
-    Title text color.
+    Title text color in (r, g, b, a) or string format.
 
     :attr:`title_color` is a :class:`~kivy.properties.ColorProperty`
     and defaults to `None`.
@@ -856,7 +851,7 @@ class MDNavigationDrawerHeader(MDBoxLayout):
 
     text_color = ColorProperty(None)
     """
-    Title text color.
+    Title text color in (r, g, b, a) or string format.
 
     :attr:`text_color` is a :class:`~kivy.properties.ColorProperty`
     and defaults to `None`.
@@ -941,7 +936,7 @@ class MDNavigationDrawerItem(OneLineAvatarIconListItem, FocusBehavior):
 
     icon_color = ColorProperty(None)
     """
-    Icon color item.
+    Icon color in (r, g, b, a) or string format item.
 
     :attr:`icon_color` is a :class:`~kivy.properties.ColorProperty`
     and defaults to `None`.
@@ -949,7 +944,8 @@ class MDNavigationDrawerItem(OneLineAvatarIconListItem, FocusBehavior):
 
     selected_color = ColorProperty([0, 0, 0, 1])
     """
-    The color of the icon and text of the selected item.
+    The color in (r, g, b, a) or string format of the icon and text of the
+    selected item.
 
     :attr:`selected_color` is a :class:`~kivy.properties.ColorProperty`
     and defaults to `[0, 0, 0, 1]`.
@@ -965,7 +961,7 @@ class MDNavigationDrawerItem(OneLineAvatarIconListItem, FocusBehavior):
 
     text_right_color = ColorProperty(None)
     """
-    Right text color item.
+    Right text color item in (r, g, b, a) or string format.
 
     :attr:`text_right_color` is a :class:`~kivy.properties.ColorProperty`
     and defaults to `None`.
@@ -1029,7 +1025,7 @@ class MDNavigationDrawerMenu(MDScrollView):
                     widget.text_color = widget._text_color
 
 
-class MDNavigationDrawer(MDCard, FakeRectangularElevationBehavior):
+class MDNavigationDrawer(MDCard):
     type = OptionProperty("modal", options=("standard", "modal"))
     """
     Type of drawer. Modal type will be on top of screen. Standard type will be
@@ -1100,9 +1096,9 @@ class MDNavigationDrawer(MDCard, FakeRectangularElevationBehavior):
     # FIXME: Doesn't work in Kivy v2.1.0.
     scrim_color = ColorProperty([0, 0, 0, 0.5])
     """
-    Color for scrim. Alpha channel will be multiplied with
-    :attr:`_scrim_alpha`. Set fourth channel to 0 if you want to disable
-    scrim.
+    Color for scrim in (r, g, b, a) or string format. Alpha channel will be
+    multiplied with :attr:`_scrim_alpha`. Set fourth channel to 0 if you want
+    to disable scrim.
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/navigation-drawer-scrim-color.png
         :align: center

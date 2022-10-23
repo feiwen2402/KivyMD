@@ -121,8 +121,8 @@ Shadow elevation control
 .. code-block:: kv
 
     MDTopAppBar:
-        title: "Elevation 10"
-        elevation: 10
+        title: "Elevation 4"
+        elevation: 4
 
 .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/toolbar-7.png
     :align: center
@@ -327,7 +327,7 @@ Material design 3 style
     :align: center
 """
 
-__all__ = ("MDTopAppBar", "MDBottomAppBar")
+__all__ = ("MDTopAppBar", "MDBottomAppBar", "ActionTopAppBarButton")
 
 import os
 from math import cos, radians, sin
@@ -337,10 +337,8 @@ from kivy.animation import Animation
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.lang import Builder
-from kivy.logger import Logger
 from kivy.metrics import dp
 from kivy.properties import (
-    AliasProperty,
     BooleanProperty,
     ColorProperty,
     ListProperty,
@@ -356,15 +354,15 @@ from kivymd import uix_path
 from kivymd.color_definitions import text_colors
 from kivymd.theming import ThemableBehavior
 from kivymd.uix.behaviors import (
+    CommonElevationBehavior,
     DeclarativeBehavior,
-    FakeRectangularElevationBehavior,
+    ScaleBehavior,
     SpecificBackgroundColorBehavior,
 )
 from kivymd.uix.button import MDFloatingActionButton, MDIconButton
 from kivymd.uix.controllers import WindowController
 from kivymd.uix.list import OneLineIconListItem
 from kivymd.uix.menu import MDDropdownMenu
-from kivymd.uix.templates import ScaleWidget
 from kivymd.uix.tooltip import MDTooltip
 from kivymd.utils.set_bars_colors import set_bars_colors
 
@@ -374,7 +372,7 @@ with open(
     Builder.load_string(kv_file.read())
 
 
-class ActionBottomAppBarButton(MDFloatingActionButton, ScaleWidget):
+class ActionBottomAppBarButton(MDFloatingActionButton, ScaleBehavior):
     """
     Implements a floating action button (FAB) for a toolbar with type 'bottom'.
     """
@@ -409,11 +407,11 @@ class OverFlowMenuItem(OneLineIconListItem):
 
 class NotchedBox(
     ThemableBehavior,
-    FakeRectangularElevationBehavior,
+    CommonElevationBehavior,
     SpecificBackgroundColorBehavior,
     BoxLayout,
 ):
-    elevation = NumericProperty(6)
+    elevation = NumericProperty(4)
     notch_radius = NumericProperty()
     notch_center_x = NumericProperty("100dp")
 
@@ -629,7 +627,14 @@ class MDTopAppBar(DeclarativeBehavior, NotchedBox, WindowController):
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/toolbar-overflow-text.png
         :align: center
 
-    Both the ``callback`` and ``tooltip text`` and ``overflow text`` are
+    ``icon color`` - icon color:
+
+    .. code-block:: kv
+
+        MDTopAppBar:
+            right_action_items: [["dots-vertical", callback, "tooltip text", "overflow text", (1, 1, 1, 1)]]
+
+    Both the ``callback`` and ``tooltip text`` and ``overflow text`` and ``icon color`` are
     optional but the order must be preserved.
 
     :attr:`left_action_items` is an :class:`~kivy.properties.ListProperty`
@@ -765,7 +770,7 @@ class MDTopAppBar(DeclarativeBehavior, NotchedBox, WindowController):
 
     md_bg_bottom_color = ColorProperty(None)
     """
-    The background color in (r, g, b, a) format for the toolbar with the
+    The background color in (r, g, b, a) or string format for the toolbar with the
     ``bottom`` mode.
 
     .. versionadded:: 1.0.0
@@ -897,7 +902,8 @@ class MDTopAppBar(DeclarativeBehavior, NotchedBox, WindowController):
 
     icon_color = ColorProperty()
     """
-    Color action button. Only for :class:`~MDBottomAppBar` class.
+    Color in (r, g, b, a) or string format action button. Only for
+    :class:`~MDBottomAppBar` class.
 
     :attr:`icon_color` is an :class:`~kivy.properties.ColorProperty`
     and defaults to `[]`.
@@ -926,7 +932,7 @@ class MDTopAppBar(DeclarativeBehavior, NotchedBox, WindowController):
 
     headline_text_color = ColorProperty(None)
     """
-    Headline text color.
+    Headline text color in (r, g, b, a) or string format.
 
     .. versionadded:: 1.0.0
 
@@ -961,8 +967,10 @@ class MDTopAppBar(DeclarativeBehavior, NotchedBox, WindowController):
             self.icon_color = self.theme_cls.primary_color
 
         self.bind(specific_text_color=self.update_action_bar_text_colors)
-        self.theme_cls.bind(material_style=self.update_bar_height)
-        self.theme_cls.bind(primary_palette=self.update_md_bg_color)
+        self.theme_cls.bind(
+            material_style=self.update_bar_height,
+            primary_palette=self.update_md_bg_color,
+        )
 
         Clock.schedule_once(
             lambda x: self.on_left_action_items(0, self.left_action_items)
@@ -1103,6 +1111,7 @@ class MDTopAppBar(DeclarativeBehavior, NotchedBox, WindowController):
                 + self.theme_cls.standard_increment / 2
                 + self._shift
             )
+            self.shadow_offset = [0, 30]
             self.on_mode(None, self.mode)
 
     def on_type_height(self, instance_toolbar, height_type_value: str) -> None:
@@ -1317,21 +1326,28 @@ class MDTopAppBar(DeclarativeBehavior, NotchedBox, WindowController):
             if len(item) > 1 and not item[1]:
                 item[1] = lambda x: None
             if len(item) == 2:
-                if type(item[1]) is str:
+                if isinstance(item[1], str) or isinstance(item[1], tuple):
                     item.insert(1, lambda x: None)
                 else:
                     item.append("")
+            if len(item) == 3:
+                if isinstance(item[2], tuple):
+                    item.insert(2, "")
 
             instance_box_layout.add_widget(
                 ActionTopAppBarButton(
                     icon=item[0],
                     on_release=item[1],
                     tooltip_text=item[2],
-                    overflow_text=item[3] if len(item) == 4 else "",
+                    overflow_text=item[3]
+                    if (len(item) == 4 and isinstance(item[3], str))
+                    else "",
                     theme_text_color="Custom"
                     if not self.opposite_colors
                     else "Primary",
-                    text_color=self.specific_text_color,
+                    text_color=self.specific_text_color
+                    if not (len(item) == 4 and isinstance(item[3], tuple))
+                    else item[3],
                     opposite_colors=self.opposite_colors,
                 )
             )
@@ -1368,7 +1384,7 @@ class MDTopAppBar(DeclarativeBehavior, NotchedBox, WindowController):
 class MDBottomAppBar(DeclarativeBehavior, FloatLayout):
     md_bg_color = ColorProperty([0, 0, 0, 0])
     """
-    Color toolbar.
+    Color toolbar in (r, g, b, a) or string format.
 
     :attr:`md_bg_color` is an :class:`~kivy.properties.ColorProperty`
     and defaults to `[0, 0, 0, 0]`.

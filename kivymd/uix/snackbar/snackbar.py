@@ -284,7 +284,6 @@ from kivy.properties import (
 )
 
 from kivymd import uix_path
-from kivymd.uix.behaviors import FakeRectangularElevationBehavior
 from kivymd.uix.button import BaseButton
 from kivymd.uix.card import MDCard
 
@@ -294,7 +293,7 @@ with open(
     Builder.load_string(kv_file.read())
 
 
-class BaseSnackbar(MDCard, FakeRectangularElevationBehavior):
+class BaseSnackbar(MDCard):
     """
     :Events:
         :attr:`on_open`
@@ -339,7 +338,7 @@ class BaseSnackbar(MDCard, FakeRectangularElevationBehavior):
 
     bg_color = ColorProperty(None)
     """
-    Snackbar background.
+    Snackbar background color in (r, g, b, a) or string format.
 
     :attr:`bg_color` is a :class:`~kivy.properties.ColorProperty`
     and defaults to `None`.

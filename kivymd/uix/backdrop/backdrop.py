@@ -202,7 +202,6 @@ from kivy.uix.boxlayout import BoxLayout
 
 from kivymd import uix_path
 from kivymd.theming import ThemableBehavior
-from kivymd.uix.behaviors import FakeRectangularElevationBehavior
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.card import MDCard
 from kivymd.uix.floatlayout import MDFloatLayout
@@ -278,7 +277,7 @@ class MDBackdrop(MDFloatLayout, ThemableBehavior):
 
     back_layer_color = ColorProperty(None)
     """
-    Background color of back layer.
+    Background color of back layer in (r, g, b, a) or string format.
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/backdrop-back-layer-color.png
         :align: center
@@ -289,7 +288,7 @@ class MDBackdrop(MDFloatLayout, ThemableBehavior):
 
     front_layer_color = ColorProperty(None)
     """
-    Background color of front layer.
+    Background color of front layer in (r, g, b, a) or string format.
 
     .. image:: https://github.com/HeaTTheatR/KivyMD-data/raw/master/gallery/kivymddoc/backdrop-front-layer-color.png
         :align: center
@@ -528,5 +527,5 @@ class _BackLayer(BoxLayout):
     pass
 
 
-class _FrontLayer(MDCard, FakeRectangularElevationBehavior):
+class _FrontLayer(MDCard):
     pass
